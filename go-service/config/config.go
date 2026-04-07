@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -15,9 +14,7 @@ type Config struct {
 }
 
 func NewFromEnv() (*Config, error) {
-    if err := godotenv.Load(); err != nil {
-        return nil, fmt.Errorf("failed to load .env: %w", err)
-    }
+    _ = godotenv.Load()
     backendURL := os.Getenv("BACKEND_URL")
     if backendURL == "" {
         backendURL = "http://localhost:5007"

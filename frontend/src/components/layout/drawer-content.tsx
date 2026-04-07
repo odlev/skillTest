@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { AcUnitOutlined, ArrowDropDown, ArrowRight } from '@mui/icons-material';
+import { ArrowDropDown, ArrowRight } from '@mui/icons-material';
 import {
   Box,
   Collapse,
-  Divider,
   List,
   ListItemButton,
   ListItemIcon,
@@ -11,9 +10,8 @@ import {
   Toolbar,
   Typography
 } from '@mui/material';
-import { blue } from '@mui/material/colors';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { getUserMenus } from '@/domains/auth/slice';
 
 type DrawerContentProps = {
@@ -27,57 +25,168 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
 }) => {
   const menus = useSelector(getUserMenus);
   const API_URL = import.meta.env.VITE_API_URL;
+  const location = useLocation();
 
   return (
-    <div>
-      <Toolbar sx={{ textDecoration: 'none' }} component={Link} to='/app'>
-        <AcUnitOutlined color='primary' fontSize='large' />
-        <Typography variant='h6' sx={{ ml: 2, color: blue[800] }}>
-          School Admin
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Logo */}
+      <Toolbar
+        sx={{
+          textDecoration: 'none',
+          px: 2.5,
+          py: 2,
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          minHeight: '64px !important'
+        }}
+        component={Link}
+        to='/app'
+      >
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: '8px',
+            background: 'linear-gradient(135deg, #00d4c8 0%, #0099a8 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 16px rgba(0,212,200,0.3)',
+            flexShrink: 0,
+            mr: 1.5
+          }}
+        >
+          <Box
+            component='span'
+            sx={{ width: 14, height: 14, borderRadius: '50%', background: '#000', opacity: 0.85 }}
+          />
+        </Box>
+        <Typography
+          sx={{
+            fontWeight: 800,
+            fontSize: '1.0rem',
+            letterSpacing: '-0.02em',
+            background: 'linear-gradient(90deg, #e2e8f0 20%, #00d4c8 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
+          School<span style={{ WebkitTextFillColor: '#00d4c8' }}>Admin</span>
         </Typography>
       </Toolbar>
-      <Divider />
-      <List component='nav' sx={{ width: '100%' }}>
-        {menus &&
-          menus.map(({ name, path, subMenus, icon }) => {
-            if (Array.isArray(subMenus) && subMenus.length > 0) {
-              return (
-                <Box key={name}>
-                  <ListItemButton onClick={() => handleNavigationClick(name)}>
-                    <ListItemIcon>
-                      <img width='20px' height='20px' src={`${API_URL}/${icon}`} />
+
+      {/* Nav */}
+      <Box sx={{ flex: 1, overflowY: 'auto', pt: 1.5, pb: 2, px: 1 }}>
+        <List component='nav' disablePadding>
+          {menus &&
+            menus.map(({ name, path, subMenus, icon }) => {
+              const isActive = location.pathname.startsWith(`/app/${path}`);
+
+              if (Array.isArray(subMenus) && subMenus.length > 0) {
+                const isGroupActive = subMenus.some((s) =>
+                  location.pathname.startsWith(`/app/${s.path}`)
+                );
+                return (
+                  <Box key={name} sx={{ mb: 0.25 }}>
+                    <ListItemButton
+                      onClick={() => handleNavigationClick(name)}
+                      selected={isGroupActive}
+                      sx={{
+                        borderRadius: '8px',
+                        mb: 0.25,
+                        borderLeft: isGroupActive
+                          ? '2px solid #00d4c8'
+                          : '2px solid transparent'
+                      }}
+                    >
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <img width='18px' height='18px' src={`${API_URL}/${icon}`} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={name}
+                        slotProps={{
+                          primary: {
+                            sx: { fontSize: '0.875rem', fontWeight: isGroupActive ? 600 : 400 }
+                          }
+                        }}
+                      />
+                      {openNavMenu === name ? (
+                        <ArrowDropDown sx={{ color: '#8b9ab2', fontSize: 18 }} />
+                      ) : (
+                        <ArrowRight sx={{ color: '#8b9ab2', fontSize: 18 }} />
+                      )}
+                    </ListItemButton>
+                    <Collapse in={openNavMenu === name} timeout='auto' unmountOnExit>
+                      <List component='div' disablePadding sx={{ pl: 1.5 }}>
+                        {subMenus.map(({ name: subName, path: subPath }) => {
+                          const isSubActive = location.pathname.startsWith(`/app/${subPath}`);
+                          return (
+                            <ListItemButton
+                              key={subName}
+                              component={Link}
+                              to={`/app/${subPath}`}
+                              selected={isSubActive}
+                              sx={{
+                                borderRadius: '8px',
+                                pl: '48px',
+                                mb: 0.25,
+                                borderLeft: isSubActive
+                                  ? '2px solid #00d4c8'
+                                  : '2px solid transparent'
+                              }}
+                            >
+                              <ListItemText
+                                primary={subName}
+                                slotProps={{
+                                  primary: {
+                                    sx: {
+                                      fontSize: '0.8375rem',
+                                      fontWeight: isSubActive ? 600 : 400,
+                                      color: isSubActive ? '#00d4c8' : 'inherit'
+                                    }
+                                  }
+                                }}
+                              />
+                            </ListItemButton>
+                          );
+                        })}
+                      </List>
+                    </Collapse>
+                  </Box>
+                );
+              } else {
+                return (
+                  <ListItemButton
+                    key={name}
+                    component={Link}
+                    to={`/app/${path}`}
+                    selected={isActive}
+                    sx={{
+                      borderRadius: '8px',
+                      mb: 0.25,
+                      borderLeft: isActive ? '2px solid #00d4c8' : '2px solid transparent'
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 36 }}>
+                      <img width='18px' height='18px' src={`${API_URL}/${icon}`} />
                     </ListItemIcon>
-                    <ListItemText primary={name} />
-                    {openNavMenu === name ? <ArrowDropDown /> : <ArrowRight />}
+                    <ListItemText
+                      primary={name}
+                      slotProps={{
+                        primary: {
+                          sx: {
+                            fontSize: '0.875rem',
+                            fontWeight: isActive ? 600 : 400,
+                            color: isActive ? '#00d4c8' : 'inherit'
+                          }
+                        }
+                      }}
+                    />
                   </ListItemButton>
-                  <Collapse in={openNavMenu === name} timeout='auto' unmountOnExit>
-                    <List component='div'>
-                      {subMenus.map(({ name, path }) => (
-                        <ListItemButton
-                          key={name}
-                          component={Link}
-                          to={`/app/${path}`}
-                          sx={{ paddingLeft: '75px' }}
-                        >
-                          <ListItemText primary={name} />
-                        </ListItemButton>
-                      ))}
-                    </List>
-                  </Collapse>
-                </Box>
-              );
-            } else {
-              return (
-                <ListItemButton key={name} component={Link} to={`/app/${path}`}>
-                  <ListItemIcon>
-                    <img width='20px' height='20px' src={`${API_URL}/${icon}`} />
-                  </ListItemIcon>
-                  <ListItemText primary={name} />
-                </ListItemButton>
-              );
-            }
-          })}
-      </List>
-    </div>
+                );
+              }
+            })}
+        </List>
+      </Box>
+    </Box>
   );
 };

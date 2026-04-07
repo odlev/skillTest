@@ -18,35 +18,36 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, methods, isFetch
 
   return (
     <form onSubmit={onSubmit}>
-      <div>
-        <TextField
-          size='small'
-          type='text'
-          label='Username'
-          sx={{ margin: '30px 0' }}
-          fullWidth
-          {...register('username')}
-          error={!!errors.username}
-          helperText={errors.username?.message}
-        />
-      </div>
-      <div>
-        <TextField
-          size='small'
-          type='password'
-          label='Password'
-          sx={{ marginBottom: '30px' }}
-          fullWidth
-          {...register('password')}
-          error={!!errors.password}
-          helperText={errors.password?.message}
-        />
-      </div>
+      <TextField
+        type='text'
+        label='Username'
+        sx={{ mb: 2.5 }}
+        fullWidth
+        {...register('username')}
+        error={!!errors.username}
+        helperText={errors.username?.message}
+      />
+      <TextField
+        type='password'
+        label='Password'
+        sx={{ mb: 3.5 }}
+        fullWidth
+        {...register('password')}
+        error={!!errors.password}
+        helperText={errors.password?.message}
+      />
       <Stack>
-        <LoadingButton loading={isFetching} type='submit' size='small' variant='contained'>
+        <LoadingButton
+          loading={isFetching}
+          type='submit'
+          size='large'
+          variant='contained'
+          sx={{ py: 1.5, fontSize: '0.95rem', fontWeight: 700, letterSpacing: '0.01em' }}
+        >
           <span>Sign In</span>
         </LoadingButton>
       </Stack>
     </form>
   );
 };
+

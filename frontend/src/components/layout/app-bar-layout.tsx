@@ -3,7 +3,6 @@ import { ArrowDropDown, Logout, MenuBook, Person } from '@mui/icons-material';
 import {
   AppBar,
   Box,
-  Button,
   Divider,
   IconButton,
   ListItemIcon,
@@ -62,10 +61,7 @@ export const AppBarLayout: React.FC<AppBarLayoutProps> = ({
       position='fixed'
       sx={{
         width: { sm: `calc(100% - ${drawerWidth}px)` },
-        ml: { sm: `${drawerWidth}px` },
-        bgcolor: 'white',
-        boxShadow: 'none',
-        borderBottom: '1px solid #e0e0e0'
+        ml: { sm: `${drawerWidth}px` }
       }}
     >
       <Toolbar>
@@ -77,15 +73,47 @@ export const AppBarLayout: React.FC<AppBarLayoutProps> = ({
           <MenuBook />
         </IconButton>
         <Box sx={{ flexGrow: 1 }}></Box>
-        <Button
-          sx={{ color: 'black' }}
-          size='large'
-          endIcon={<ArrowDropDown />}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            px: 1.5,
+            py: 0.75,
+            borderRadius: '10px',
+            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'rgba(255,255,255,0.04)',
+            cursor: 'pointer',
+            '&:hover': { background: 'rgba(255,255,255,0.08)' }
+          }}
           onClick={handleMenu}
-          variant='text'
         >
-          {currentUserName}
-        </Button>
+          <Box
+            sx={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #00d4c8 0%, #7c3aed 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}
+          >
+            <Typography sx={{ fontSize: '0.7rem', fontWeight: 700, color: '#fff' }}>
+              {currentUserName?.charAt(0)?.toUpperCase() ?? 'A'}
+            </Typography>
+          </Box>
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, lineHeight: 1.2, color: '#e2e8f0' }}>
+              {currentUserName}
+            </Typography>
+            <Typography sx={{ fontSize: '0.7rem', color: '#8b9ab2', lineHeight: 1.2 }}>
+              {currentUserRole}
+            </Typography>
+          </Box>
+          <ArrowDropDown sx={{ color: '#8b9ab2', fontSize: 18 }} />
+        </Box>
         <Menu
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}

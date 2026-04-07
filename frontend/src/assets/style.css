@@ -1,11 +1,11 @@
 :root {
-  --link-color: #03588a;
+  --link-color: #00d4c8;
 }
 
 body {
   margin: 0 !important;
   padding: 0 !important;
-  background-color: #f3f6f999;
+  background-color: #0a0c10;
 }
 
 .notice-title {
